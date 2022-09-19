@@ -725,3 +725,6 @@ fastlane/test_output
 iOSInjectionProject/
 
 # End of https://www.toptal.com/developers/gitignore/api/node,macos,python,java,c,c++,go,phpstorm,ruby,rust,swift,dotnetcore
+
+.idea/
+
