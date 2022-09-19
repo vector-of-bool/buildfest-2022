@@ -1,0 +1,10 @@
+{
+    "autoload": {
+        "psr-4": {
+            "SchoolApp\\": "src/"
+        }
+    },
+    "require": {
+        "mongodb/mongodb": "1.*"
+    }
+}
