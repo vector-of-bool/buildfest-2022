@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "test": "mocha 'out/**/*.test.js'"
   },
   "dependencies": {
     "bulma": "^0.9.4",
@@ -18,12 +19,16 @@
     "validator": "^13.7.0"
   },
   "devDependencies": {
+    "@types/chai": "^4.3.3",
+    "@types/mocha": "^9.1.1",
     "@types/node": "18.7.18",
     "@types/react": "18.0.20",
     "@types/react-dom": "18.0.6",
     "@types/validator": "^13.7.6",
+    "chai": "^4.3.6",
     "eslint": "8.23.1",
     "eslint-config-next": "12.3.0",
+    "mocha": "^10.0.0",
     "typescript": "4.8.3"
   }
 }
