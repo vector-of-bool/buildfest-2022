@@ -31,5 +31,5 @@ Steps:
 7. Install mongoose: npm install mongoose
    - Note I plan to replace mongoose with the node native driver directly but
      I want to try both.
-8. ![](nextjs-error.png)
-9. TBD...
+8. TBD...
+
