@@ -1,4 +1,3 @@
-import 'bulma/css/bulma.min.css';
 import { MoLink } from "../utils/types"
 import Link from "next/link"
 
@@ -13,27 +12,31 @@ function Index(props: IndexProps) {
   const { links } = props
 
   return (
-      <div className="section">
-        <div className="container">
-          <h1 className="title">
-            Mo Links
-          </h1>
-          <p className="subtitle">
-            Click On Link to see it individually
-          </p>
-        </div>
-        <div className="container"></div>
-         {/* MAPPING OVER THE MOLINKS */}
-         {links.map(t => (
-          <div key={t._id}>
-            <Link href={`/links/${t._id}`}>
-              <h3 style={{ cursor: "pointer" }}>
-                {t.alias} - {t.link}
-              </h3>
-            </Link>
-          </div>
-          ))}
+    <div className="containter">
+      <div className="control">
+        <Link href="./links/create/"><button className="button is-primary">Create new</button></Link>
       </div>
+      <div className="container">
+        <table className="table">
+          <thead>
+            <tr>
+              <th>Alias</th>
+              <th>Link</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {links.map(link => (
+              <tr key={link._id}>
+                <td>{link.alias}</td>
+                <td>{link.link}</td>
+                <td><Link href={`./links/${link._id}`}><button className="button is-link is-primary">Edit</button></Link></td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
   )
 }
 
