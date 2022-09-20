@@ -2,6 +2,7 @@ import { Formik } from "formik"
 import { useRouter } from "next/router"
 import Link from "next/link"
 import validator from "validator"
+import { MOLINKS_CONFIG } from "../../utils/config"
 
 
 // Define Prop Interface
@@ -93,7 +94,7 @@ function CreateForm(props: Props) {
 export async function getStaticProps(context: any) {
     return {
         props: {
-            url: process.env.API_URL,
+            url: MOLINKS_CONFIG.API_URL,
         },
     }
 }
