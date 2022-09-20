@@ -31,8 +31,8 @@ application {
     mainClass.set("org.buildfest2022.Application")
 }
 java {
-    sourceCompatibility = JavaVersion.toVersion("11")
-    targetCompatibility = JavaVersion.toVersion("11")
+    sourceCompatibility = JavaVersion.toVersion("17")
+    targetCompatibility = JavaVersion.toVersion("17")
 }
 
 graalvmNative.toolchainDetection = false
@@ -44,6 +44,3 @@ micronaut {
         annotations("org.buildfest2022.*")
     }
 }
-
-
-
