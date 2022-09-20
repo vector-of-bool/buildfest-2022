@@ -1,4 +1,5 @@
 import { useRouter } from "next/router"
+import { MOLINKS_CONFIG } from "../utils/config"
 
 // Define Prop Interface
 interface Props {
@@ -13,7 +14,7 @@ function RedirectPage(props: Props) {
 
 export async function getServerSideProps(context: any) {
   // fetch the MoLink, the param was received via context.query.id
-  const res = await fetch(process.env.API_URL + "/" + context.query.id)
+  const res = await fetch(MOLINKS_CONFIG.API_URL + "/" + context.query.id)
   const molink = await res.json()
   let url = '/'
   if (molink) {

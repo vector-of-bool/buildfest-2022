@@ -1,5 +1,6 @@
 import { MoLink } from "../utils/types"
 import Link from "next/link"
+import { MOLINKS_CONFIG } from "../utils/config"
 
 
 // Define the components props
@@ -43,7 +44,7 @@ function Index(props: IndexProps) {
 // GET PROPS FOR SERVER SIDE RENDERING
 export async function getServerSideProps() {
   // get molink data from API
-  const res = await fetch(process.env.API_URL as string)
+  const res = await fetch(MOLINKS_CONFIG.API_URL)
   const links = await res.json()
 
   // return props

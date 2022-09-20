@@ -2,6 +2,7 @@ import { Formik } from "formik"
 import { MoLink } from "../../utils/types"
 import { useRouter } from "next/router"
 import validator from "validator"
+import { MOLINKS_CONFIG } from "../../utils/config"
 
 // Define Prop Interface
 interface Props {
@@ -85,11 +86,11 @@ function EditForm(props: Props) {
 
 export async function getServerSideProps(context: any) {
   // fetch the MoLink, the param was received via context.query.id
-  const res = await fetch(process.env.API_URL + "/" + context.query.id)
+  const res = await fetch(MOLINKS_CONFIG.API_URL + "/" + context.query.id)
   const MoLink = await res.json()
 
   //return the serverSideProps the MoLink and the url from out env variables for frontend api calls
-  return { props: { link: MoLink, url: process.env.API_URL } }
+  return { props: { link: MoLink, url: MOLINKS_CONFIG.API_URL } }
 }
 
 
