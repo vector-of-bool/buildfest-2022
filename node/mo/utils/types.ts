@@ -1,9 +1,11 @@
-// Interface to defining our object of response functions
-export interface ResponseFuncs {
-    GET?: Function
-    POST?: Function
-    PUT?: Function
-    DELETE?: Function
+import { NextApiHandler } from "next"
+
+/// A set of HTTP-method-handling functions
+export interface MethodResponder {
+    get?: NextApiHandler;
+    post?: NextApiHandler;
+    put?: NextApiHandler;
+    delete?: NextApiHandler;
 }
 
 // Interface to define our MoLink model on the frontend
