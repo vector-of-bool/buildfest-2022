@@ -10,13 +10,15 @@ npm run dev
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost](http://localhost) with your browser to see the result.
+If you encounter: `listen EACCES: permission denied 0.0.0.0:80` see here: https://stackoverflow.com/questions/60372618/nodejs-listen-eacces-permission-denied-0-0-0-080
+
 
 Add a local environment settings file: `.env.local`
 
 ```
 DATABASE_URL=mongodb://localhost:27017/mo_links
-API_URL=http://localhost:80/api/links
+API_URL=http://localhost/api/links
 ```
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
