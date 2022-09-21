@@ -18,7 +18,12 @@ const handler = async (req: NextApiRequest, res: NextApiResponse) => {
         // RESPONSE FOR GET REQUESTS
         GET: async (req: NextApiRequest, res: NextApiResponse) => {
             const { MoLink } = await connect() // connect to database
-            res.json(await MoLink.findOne({alias: id}).catch(catcher))
+            var found = await MoLink.findOne({alias: id}).catch(catcher)
+            if (found == null) {
+                res.status(404).json({})
+            } else {
+               res.json(found)
+            }
         },
         // RESPONSE PUT REQUESTS
         PUT: async (req: NextApiRequest, res: NextApiResponse) => {

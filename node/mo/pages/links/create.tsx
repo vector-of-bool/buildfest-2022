@@ -3,11 +3,13 @@ import { useRouter } from "next/router"
 import Link from "next/link"
 import validator from "validator"
 import { MOLINKS_CONFIG } from "../../utils/config"
+import wordsList from './words-no-swears-data.json';
 
 
 // Define Prop Interface
 interface Props {
-    url: string
+    url: string,
+    randWord: string
 }
 
 // Define Component
@@ -15,7 +17,7 @@ function CreateForm(props: Props) {
     const router = useRouter()
     return (
         <Formik
-            initialValues={{ alias: "", link: "" }}
+            initialValues={{ alias: props.randWord, link: "" }}
             validate={values => {
                 const errors: any = {};
                 if (!values.alias) {
@@ -89,12 +91,27 @@ function CreateForm(props: Props) {
     )
 }
 
+function getRandomInt(min: number, max: number) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 
 // export getStaticProps to provide API_URL to component
-export async function getStaticProps(context: any) {
+export async function getServerSideProps(context: any) {
+
+    var randWord = ""
+    var resStatus = 200
+    while(resStatus == 200){
+        var randInt = getRandomInt(0, wordsList.length);
+        randWord = wordsList[randInt]
+        var res = await fetch(MOLINKS_CONFIG.API_URL + "/" + randWord)
+        resStatus = res.status
+    }
+
     return {
         props: {
             url: MOLINKS_CONFIG.API_URL,
+            randWord: randWord
         },
     }
 }
