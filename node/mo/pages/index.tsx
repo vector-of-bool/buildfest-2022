@@ -68,8 +68,8 @@ function Index(props: IndexProps) {
           </table>
         </div>
       </div>
-    </div >
-  )
+    </div>
+  );
 }
 
 // GET PROPS FOR SERVER SIDE RENDERING
