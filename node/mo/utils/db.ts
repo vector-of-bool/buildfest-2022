@@ -1,5 +1,6 @@
-import { MongoClient, Collection, Db, Document } from "mongodb";
+import { MongoClient, Collection, Db, Document, AbstractCursor } from "mongodb";
 import { MOLINKS_CONFIG } from "./config";
+import { MoLink } from "./types";
 
 /**
  * @returns A new MongoClient connected with the default database URL.
@@ -37,18 +38,6 @@ export async function openDefaultDB(client: MongoClient): Promise<Db> {
 }
 
 /**
- * The type of document that contains aliased links
- */
-export interface LinkDocument {
-    /// The spelling of the alias of the link
-    alias: string;
-    /// The target of the link
-    link: string;
-    /// The number of times the link has been used
-    n: number;
-}
-
-/**
  * @param name The name of the collection to open
  * @returns A new handle to the collection
  */
@@ -62,13 +51,13 @@ export async function openCollection<T extends Document>(name: string, dbOrClien
 }
 
 /**
- * Opne the LinkDocument collection in the database
+ * Opne the MoLink collection in the database
  *
  * @param db Override the database to connect to
- * @returns A handle to the collection of LinkDocument objects
+ * @returns A handle to the collection of MoLink objects
  */
-export async function openLinksCollection(db: Db): Promise<Collection<LinkDocument>> {
-    return openCollection<LinkDocument>('links', db);
+export async function openLinksCollection(db: Db): Promise<Collection<MoLink>> {
+    return openCollection<MoLink>('links', db);
 }
 
 
@@ -77,10 +66,24 @@ export async function openLinksCollection(db: Db): Promise<Collection<LinkDocume
  * @param fn The handler that works with the links data
  * @returns A promise that returns the result of the handler
  */
-export async function withLinksCollection<T>(fn: (links: Collection<LinkDocument>) => T): Promise<Awaited<T>> {
+export async function withLinksCollection<T>(fn: (links: Collection<MoLink>) => T): Promise<Awaited<T>> {
     return await withClient(async (client) => {
         const db = await openDefaultDB(client);
         const coll = await openLinksCollection(db);
         return await fn(coll);
     });
+}
+
+/**
+ * Convert an AsyncIterable into an array of objects
+ * @param cur An asynchronous iterable object
+ * @returns An array of all iterated elements
+ * @note Beware arbitrary large iterables!
+ */
+export async function getAll<T>(cur: AsyncIterable<T>): Promise<T[]> {
+    const acc = [];
+    for await (const el of cur) {
+        acc.push(el);
+    }
+    return acc;
 }

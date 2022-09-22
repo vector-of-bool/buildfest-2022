@@ -1,17 +1,11 @@
-import { MoLink } from "../utils/types"
+import { MoLink, MoLinkJSON } from "../utils/types"
 import Link from "next/link"
 import { MOLINKS_CONFIG } from "../utils/config"
 import { useEffect, useState } from "react";
 
 
 // Define the components props
-interface MoLinkJSON {
-  _id: string;
-  alias: string;
-  link: string;
-  n: number;
-  createdAt?: string;
-}
+
 interface IndexProps {
   links: MoLinkJSON[];
 }
