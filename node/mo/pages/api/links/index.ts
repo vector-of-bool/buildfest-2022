@@ -1,32 +1,30 @@
 import { NextApiResponse } from "next";
-import { connect } from "../../../utils/connection"
-import { getAll, openLinksCollection, withClient, withLinksCollection } from "../../../utils/db";
+import validator from "validator";
+import { withLinksCollection } from "../../../utils/db";
 import { createMethodHandler } from "../../../utils/handle"
-import { MoLinkJSON, MoLinkPutJSON } from "../../../utils/types";
+import { encodeExtendedJSON, ExtendedJSONEncoded, MoLink, MoLinkPutJSON } from "../../../utils/types";
 
 export default createMethodHandler({
-  async get(req, resp: NextApiResponse<MoLinkJSON[]>) {
+  async get(_req, resp: NextApiResponse<ExtendedJSONEncoded<MoLink>[]>) {
     await withLinksCollection(async coll => {
-      const links = await getAll(coll.find().sort({ n: -1 }).limit(100));
-      const json: MoLinkJSON[] = links.map(m => ({
-        ...m,
-        _id: m._id.toHexString(),
-        createdAt: m.createdAt.toString(),
-      }))
-      resp.json(json);
+      const links = await coll.find().sort({ n: -1 }).limit(100).toArray();
+      const data = links.map(encodeExtendedJSON);
+      resp.json(data);
     });
   },
   async post(req, resp: NextApiResponse<{ error?: string }>) {
     const doc: MoLinkPutJSON = req.body;
-    doc.n = 0; // Initial use-count is zero
     if (!doc.link || !doc.alias) {
       return resp.status(400).json({ error: 'Missing one or more required properties' });
+    }
+    if (!validator.isURL(doc.link)) {
+      return resp.status(400).json({ error: `"${doc.link}" is not a valid URL` });
     }
     const dbDoc = {
       alias: doc.alias,
       link: doc.link,
       createdAt: new Date(),
-      n: 0
+      n: 0,
     }
     await withLinksCollection(async coll => {
       return await coll.insertOne(dbDoc);

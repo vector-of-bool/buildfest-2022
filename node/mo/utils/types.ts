@@ -1,5 +1,5 @@
 import { NextApiHandler } from "next"
-import { ObjectId } from "mongodb";
+import { EJSON } from "bson";
 
 /// A set of HTTP-method-handling functions
 export interface MethodResponder {
@@ -23,8 +23,19 @@ export interface MoLink {
     createdAt: Date;
 }
 
-/// The JSON encoding replaces 'createdAt' with an ISO8601 string
-export type MoLinkJSON = Omit<MoLink, 'createdAt'> & { createdAt: string, _id?: string };
-
 /// Type of the data object sent to insert/update a link
-export type MoLinkPutJSON = Partial<MoLinkJSON>;
+export type MoLinkPutJSON = Partial<Omit<MoLink, 'createdAt' | 'n'>>;
+
+export interface ExtendedJSONEncoded<T> {
+    __ejson__: T & { __: never };
+}
+
+export function encodeExtendedJSON<T extends EJSON.SerializableTypes>(val: T): ExtendedJSONEncoded<T> {
+    const v = EJSON.serialize(val);
+    return v as unknown as ExtendedJSONEncoded<T>;
+}
+
+export function decodedExtendedJSON<T>(encoded: ExtendedJSONEncoded<T>): T {
+    const v = EJSON.deserialize(encoded);
+    return v as unknown as T;
+}

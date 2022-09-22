@@ -73,17 +73,3 @@ export async function withLinksCollection<T>(fn: (links: Collection<MoLink>) => 
         return await fn(coll);
     });
 }
-
-/**
- * Convert an AsyncIterable into an array of objects
- * @param cur An asynchronous iterable object
- * @returns An array of all iterated elements
- * @note Beware arbitrary large iterables!
- */
-export async function getAll<T>(cur: AsyncIterable<T>): Promise<T[]> {
-    const acc = [];
-    for await (const el of cur) {
-        acc.push(el);
-    }
-    return acc;
-}
