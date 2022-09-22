@@ -1,48 +1,41 @@
 import { NextApiRequest, NextApiResponse } from "next"
 import { connect } from "../../../utils/connection"
-import { ResponseFuncs } from "../../../utils/types"
+import { createMethodHandler } from "../../../utils/handle"
 
 const handler = async (req: NextApiRequest, res: NextApiResponse) => {
-    //capture request method, we type it as a key of ResponseFunc to reduce typing later
-    const method: keyof ResponseFuncs = req.method as keyof ResponseFuncs
-
     //function for catch errors
     const catcher = (error: Error) => res.status(400).json({ error })
 
     // GRAB ID FROM req.query (where next stores params)
     const id: string = decodeURIComponent(req.query.id as string)
 
-
     // Potential Responses for /links/:id
-    const handleCase: ResponseFuncs = {
+    const handler = createMethodHandler({
         // RESPONSE FOR GET REQUESTS
-        GET: async (req: NextApiRequest, res: NextApiResponse) => {
+        async get(req: NextApiRequest, res: NextApiResponse) {
             const { MoLink } = await connect() // connect to database
-            var found = await MoLink.findOne({alias: id}).catch(catcher)
+            var found = await MoLink.findOne({ alias: id });
             if (found == null) {
                 res.status(404).json({})
             } else {
-               res.json(found)
+                res.json(found)
             }
         },
         // RESPONSE PUT REQUESTS
-        PUT: async (req: NextApiRequest, res: NextApiResponse) => {
+        async put(req: NextApiRequest, res: NextApiResponse) {
             const { MoLink } = await connect() // connect to database
             res.json(
-                await MoLink.findOneAndUpdate({alias: id}, req.body, { new: true }).catch(catcher)
+                await MoLink.findOneAndUpdate({ alias: id }, req.body, { new: true })
             )
         },
         // RESPONSE FOR DELETE REQUESTS
-        DELETE: async (req: NextApiRequest, res: NextApiResponse) => {
+        async delete(req: NextApiRequest, res: NextApiResponse) {
             const { MoLink } = await connect() // connect to database
-            res.json(await MoLink.deleteOne({alias: id}).catch(catcher))
+            res.json(await MoLink.deleteOne({ alias: id }).catch(catcher))
         },
-    }
+    });
 
-    // Check if there is a response for the particular method, if so invoke it, if not response with an error
-    const response = handleCase[method]
-    if (response) await response(req, res)
-    else res.status(400).json({ error: "No Response for This Request" })
+    return handler(req, res);
 }
 
-export default handler
+export default handler;
