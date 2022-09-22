@@ -14,26 +14,23 @@ export async function newMongoClient(): Promise<MongoClient> {
     });
 }
 
+let _DEFAULT_CLIENT: Promise<MongoClient> | undefined;
 /**
- * Perform work with a new MongoClient, automatically closing it when the handler exits
- *
- * @param fn A handler that performs work with the given MongoClient
- * @returns The return value from the callback
+ * @returns The application-wide default MongoDB client
  */
-export async function withClient<T>(fn: (client: MongoClient) => T): Promise<Awaited<T>> {
-    const client = await newMongoClient();
-    try {
-        return await fn(client);
-    } finally {
-        await client.close();
+export async function getDefaultClient(): Promise<MongoClient> {
+    if (_DEFAULT_CLIENT === undefined) {
+        _DEFAULT_CLIENT = newMongoClient();
     }
+    return await _DEFAULT_CLIENT;
 }
 
 /**
  * @param client An optional client to use
- * @returns {Db} An open
+ * @returns {Db} The default database for the client
  */
-export async function openDefaultDB(client: MongoClient): Promise<Db> {
+export async function openDefaultDB(client?: MongoClient): Promise<Db> {
+    client ??= await getDefaultClient();
     return client.db('molinks');
 }
 
@@ -56,20 +53,7 @@ export async function openCollection<T extends Document>(name: string, dbOrClien
  * @param db Override the database to connect to
  * @returns A handle to the collection of MoLink objects
  */
-export async function openLinksCollection(db: Db): Promise<Collection<MoLink>> {
+export async function openLinksCollection(db?: Db): Promise<Collection<MoLink>> {
+    db ??= await openDefaultDB();
     return openCollection<MoLink>('links', db);
-}
-
-
-/**
- * Invoke a handler that works with a set of links, closing the client when finished.
- * @param fn The handler that works with the links data
- * @returns A promise that returns the result of the handler
- */
-export async function withLinksCollection<T>(fn: (links: Collection<MoLink>) => T): Promise<Awaited<T>> {
-    return await withClient(async (client) => {
-        const db = await openDefaultDB(client);
-        const coll = await openLinksCollection(db);
-        return await fn(coll);
-    });
 }
