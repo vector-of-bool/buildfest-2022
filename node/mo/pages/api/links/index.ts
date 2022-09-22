@@ -7,8 +7,11 @@ export default createMethodHandler({
     resp.json(await MoLink.find().sort({ n: -1 }).limit(100));
   },
   async post(req, resp) {
+    const doc = req.body;
+    doc.n = 0; // Initial use-count is zero
+    doc.createdAt = new Date(); // Created now
     const { MoLink } = await connect();
-    return MoLink.create(req.body).then(
+    return MoLink.create(doc).then(
       created => {
         resp.status(202).json(created);
       },
