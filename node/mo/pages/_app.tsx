@@ -1,10 +1,11 @@
 import 'bulma/css/bulma.min.css'
+import '../styles/globals.css'
 import Link from "next/link"
 import type { AppProps } from 'next/app'
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <div>
+    <div className='layout vbox'>
       <section className="hero is-info">
         <div className="hero-body">
           <p className="title">
@@ -15,8 +16,8 @@ function MyApp({ Component, pageProps }: AppProps) {
           </p>
         </div>
       </section>
-      <section className="section">
-        <div className="container">
+      <section className="section layout vbox">
+        <div className="container layout self-center">
           <Component {...pageProps} />
         </div>
       </section>

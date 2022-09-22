@@ -1,57 +1,88 @@
 import { MoLink } from "../utils/types"
 import Link from "next/link"
 import { MOLINKS_CONFIG } from "../utils/config"
+import { useEffect, useState } from "react";
 
 
 // Define the components props
+interface MoLinkJSON {
+  _id: string;
+  alias: string;
+  link: string;
+  n: number;
+  createdAt?: string;
+}
 interface IndexProps {
-  links: Array<MoLink>
+  links: MoLinkJSON[];
 }
 
 // define the page component
 function Index(props: IndexProps) {
   const { links } = props
 
+  const dateFormat = new Intl.DateTimeFormat(undefined, {
+    dateStyle: 'medium',
+    timeStyle: 'medium',
+  });
+
   return (
-    <div className="container">
-      <div className="control">
-        <Link href="./links/create"><button className="button is-primary">Create new</button></Link>
-      </div>
-      <div className="container">
-        <table className="table">
-          <thead>
-            <tr>
-              <th>Alias</th>
-              <th>Link</th>
-              <th>Count</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {links.map(link => (
-              <tr key={link._id}>
-                <td>{link.alias}</td>
-                <td>{link.link}</td>
-                <td>{link.n || 0}</td>
-                <td><Link href={`./links/${encodeURIComponent(link.alias)}`}><button className="button is-link is-primary">Edit</button></Link></td>
+    <div className="container layout vbox" style={{ gap: '30px' }}>
+      <Link href="./links/create"><button className="button is-primary">Create a New Link</button></Link>
+      <div className="popular-box layout vbox" style={{
+        border: '1px solid #0004',
+        boxShadow: '0 4px 15px #0005, 0 2px 5px #0006'
+      }}>
+        <h2 className="layout self-center" style={{ fontSize: '15pt', fontWeight: 'bold', fontStyle: 'italic', margin: '5px' }}>Most Popular:</h2>
+        <div className="container">
+          <table className="table">
+            <thead>
+              <tr>
+                <th>Alias</th>
+                <th>Link</th>
+                <th>Count</th>
+                <th>Created</th>
+                <th></th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {links.map(link => (
+                <tr key={link._id}>
+                  <td>{link.alias}</td>
+                  <td><a href={link.link}>{link.link}</a></td>
+                  <td>{link.n || 0}</td>
+                  <td>{
+                    (() => {
+                      const [dateString, setDateString] = useState('');
+                      useEffect(() => setDateString(
+                        link.createdAt
+                          ? dateFormat.format(new Date(link.createdAt))
+                          : '[no date recorded]'
+                      ));
+                      return dateString;
+                    })()
+                  }</td>
+                  <td><Link href={`./links/${encodeURIComponent(link.alias)}`}><button className="button is-link is-primary">Edit</button></Link></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-    </div>
+    </div >
   )
 }
 
 // GET PROPS FOR SERVER SIDE RENDERING
-export async function getServerSideProps() {
+export async function getServerSideProps(): Promise<{ props: IndexProps }> {
   // get molink data from API
   const res = await fetch(MOLINKS_CONFIG.API_URL)
-  const links = await res.json()
+  const links: MoLinkJSON[] = await res.json();
 
   // return props
   return {
-    props: { links },
+    props: {
+      links
+    },
   }
 }
 
